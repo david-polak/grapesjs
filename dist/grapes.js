@@ -13108,7 +13108,7 @@ LineWidget.prototype.changed = function () {
   this.height = null;
   var diff = widgetHeight(this) - oldH;
   if (!diff) { return }
-  updateLineHeight(line, line.height + diff);
+  if (!lineIsHidden(this.doc, line)) { updateLineHeight(line, line.height + diff); }
   if (cm) {
     runInOp(cm, function () {
       cm.curOp.forceUpdate = true;
@@ -14035,7 +14035,7 @@ keyMap.pcDefault = {
   "Ctrl-G": "findNext", "Shift-Ctrl-G": "findPrev", "Shift-Ctrl-F": "replace", "Shift-Ctrl-R": "replaceAll",
   "Ctrl-[": "indentLess", "Ctrl-]": "indentMore",
   "Ctrl-U": "undoSelection", "Shift-Ctrl-U": "redoSelection", "Alt-U": "redoSelection",
-  fallthrough: "basic"
+  "fallthrough": "basic"
 };
 // Very basic readline/emacs-style bindings, which are standard on Mac.
 keyMap.emacsy = {
@@ -14053,7 +14053,7 @@ keyMap.macDefault = {
   "Cmd-G": "findNext", "Shift-Cmd-G": "findPrev", "Cmd-Alt-F": "replace", "Shift-Cmd-Alt-F": "replaceAll",
   "Cmd-[": "indentLess", "Cmd-]": "indentMore", "Cmd-Backspace": "delWrappedLineLeft", "Cmd-Delete": "delWrappedLineRight",
   "Cmd-U": "undoSelection", "Shift-Cmd-U": "redoSelection", "Ctrl-Up": "goDocStart", "Ctrl-Down": "goDocEnd",
-  fallthrough: ["basic", "emacsy"]
+  "fallthrough": ["basic", "emacsy"]
 };
 keyMap["default"] = mac ? keyMap.macDefault : keyMap.pcDefault;
 
@@ -15186,6 +15186,7 @@ function CodeMirror$1(place, options) {
 
   var doc = options.value;
   if (typeof doc == "string") { doc = new Doc(doc, options.mode, null, options.lineSeparator, options.direction); }
+  else if (options.mode) { doc.modeOption = options.mode; }
   this.doc = doc;
 
   var input = new CodeMirror$1.inputStyles[options.inputStyle](this);
@@ -17089,7 +17090,7 @@ CodeMirror$1.fromTextArea = fromTextArea;
 
 addLegacyProps(CodeMirror$1);
 
-CodeMirror$1.version = "5.39.0";
+CodeMirror$1.version = "5.39.2";
 
 return CodeMirror$1;
 
@@ -19719,10 +19720,10 @@ if (!CodeMirror.mimeModes.hasOwnProperty("text/html"))
 
 /***/ }),
 
-/***/ "./node_modules/process/browser.js":
-/*!*****************************************!*\
-  !*** ./node_modules/process/browser.js ***!
-  \*****************************************/
+/***/ "./node_modules/node-libs-browser/node_modules/process/browser.js":
+/*!************************************************************************!*\
+  !*** ./node_modules/node-libs-browser/node_modules/process/browser.js ***!
+  \************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports) {
 
@@ -20373,7 +20374,7 @@ exports.default = Promise;
     attachTo.clearImmediate = clearImmediate;
 }(typeof self === "undefined" ? typeof global === "undefined" ? this : global : self));
 
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../process/browser.js */ "./node_modules/process/browser.js")))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(/*! ./../webpack/buildin/global.js */ "./node_modules/webpack/buildin/global.js"), __webpack_require__(/*! ./../node-libs-browser/node_modules/process/browser.js */ "./node_modules/node-libs-browser/node_modules/process/browser.js")))
 
 /***/ }),
 
@@ -26837,6 +26838,7 @@ module.exports = {
       }
       if (component) {
         var coll = component.collection;
+        component.trigger('component:destroy');
         coll && coll.remove(component);
       }
     });
@@ -37501,7 +37503,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.25',
+    version: '0.14.26',
 
     /**
      * Initializes an editor based on passed options
@@ -37533,6 +37535,8 @@ module.exports = function () {
 
         if (plugin) {
           plugin(editor, config.pluginsOpts[pluginId] || {});
+        } else if (typeof pluginId === 'function') {
+          pluginId(editor, config.pluginsOpts[pluginId] || {});
         } else {
           console.warn('Plugin ' + pluginId + ' not found');
         }
@@ -38401,7 +38405,7 @@ module.exports = _backbone2.default.View.extend({
     var model = this.model;
     var components = model.get('components');
     model.set('open', false);
-    this.listenTo(components, 'remove add change reset', this.checkChildren);
+    this.listenTo(components, 'remove add reset', this.checkChildren);
     this.listenTo(model, 'change:status', this.updateStatus);
     this.listenTo(model, 'change:open', this.updateOpening);
     this.listenTo(model, 'change:style:display', this.updateVisibility);
@@ -38625,7 +38629,7 @@ module.exports = _backbone2.default.View.extend({
    * */
   checkChildren: function checkChildren() {
     var model = this.model;
-    var c = this.countChildren(model);
+    var count = this.countChildren(model);
     var pfx = this.pfx;
     var noChildCls = this.clsNoChild;
     var title = this.$el.children('.' + this.clsTitleC).children('.' + this.clsTitle);
@@ -38634,9 +38638,9 @@ module.exports = _backbone2.default.View.extend({
       this.cnt = this.$el.children('.' + this.clsCount);
     }
 
-    if (c) {
+    if (count) {
       title.removeClass(noChildCls);
-      this.cnt.html(c);
+      this.cnt.html(count);
     } else {
       title.addClass(noChildCls);
       this.cnt.empty();

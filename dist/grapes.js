@@ -32484,7 +32484,7 @@ var Component = Backbone.Model.extend(_Styleable2.default).extend({
 
     var cloned = new this.constructor(attr, opts);
     if (em) {
-      em.trigger('component:clone', em);
+      em.trigger('component:clone', cloned);
     }
     return cloned;
   },
@@ -38218,7 +38218,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.49',
+    version: '0.14.50',
 
     /**
      * Initialize the editor with passed options

@@ -28553,9 +28553,6 @@ module.exports = {
         }
 
         added = (0, _underscore.isArray)(added) ? added : [added];
-        added.forEach(function (add) {
-          return ed.trigger('component:clone', add);
-        });
       });
 
       selected.emitUpdate();
@@ -32485,7 +32482,11 @@ var Component = Backbone.Model.extend(_Styleable2.default).extend({
       attr.style = style;
     }
 
-    return new this.constructor(attr, opts);
+    var cloned = new this.constructor(attr, opts);
+    if (em) {
+      em.trigger('component:clone', em);
+    }
+    return cloned;
   },
 
 
@@ -38217,7 +38218,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.47',
+    version: '0.14.49',
 
     /**
      * Initialize the editor with passed options
@@ -43804,7 +43805,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                                                                                                                                                                                                                                                                    * * [getProperty](#getproperty)
                                                                                                                                                                                                                                                                    * * [removeProperty](#removeproperty)
                                                                                                                                                                                                                                                                    * * [getProperties](#getproperties)
-                                                                                                                                                                                                                                                                   * * [getModelToStyle](#getmodeltostyle)
                                                                                                                                                                                                                                                                    * * [getModelToStyle](#getmodeltostyle)
                                                                                                                                                                                                                                                                    * * [addType](#addtype)
                                                                                                                                                                                                                                                                    * * [getType](#gettype)
@@ -54055,7 +54055,7 @@ var upFirst = function upFirst(value) {
 };
 
 var camelCase = function camelCase(value) {
-  var values = value.split('-');
+  var values = value.split('-').filter(String);
   return values[0].toLowerCase() + values.slice(1).map(upFirst);
 };
 

@@ -703,8 +703,12 @@ const Component = Backbone.Model.extend(Styleable).extend(
       if (em && em.getConfig('avoidInlineStyle') && !isEmpty(style)) {
         attr.style = style;
       }
-
-      return new this.constructor(attr, opts);
+      
+      const cloned = new this.constructor(attr, opts);
+      if (em) {
+        em.trigger('component:clone', em)
+      }
+      return cloned
     },
 
     /**

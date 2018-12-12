@@ -28554,7 +28554,7 @@ module.exports = {
 
         added = (0, _underscore.isArray)(added) ? added : [added];
         added.forEach(function (add) {
-          return ed.trigger('component:clone', add);
+          return ed.trigger('component:paste', add);
         });
       });
 
@@ -31931,6 +31931,17 @@ var Component = Backbone.Model.extend(_Styleable2.default).extend({
 
 
   /**
+   * Get the index of the component in the parent collection.
+   * @return {Number}
+   */
+  index: function index() {
+    var collection = this.collection;
+
+    return collection && collection.indexOf(this);
+  },
+
+
+  /**
    * Find inner components by query string.
    * **ATTENTION**: this method works only with already rendered component
    * @param  {String} query Query string
@@ -32485,7 +32496,10 @@ var Component = Backbone.Model.extend(_Styleable2.default).extend({
       attr.style = style;
     }
 
-    return new this.constructor(attr, opts);
+    var cloned = new this.constructor(attr, opts);
+    em && em.trigger('component:clone', cloned);
+
+    return cloned;
   },
 
 
@@ -37280,7 +37294,7 @@ module.exports = function (config) {
     * * `component:mount` - Component is monted to an element and rendered in canvas
     * * `component:add` - Triggered when a new component is added to the editor, the model is passed as an argument to the callback
     * * `component:remove` - Triggered when a component is removed, the model is passed as an argument to the callback
-    * * `component:clone` - Triggered when a new component is added by a clone command, the model is passed as an argument to the callback
+    * * `component:clone` - Triggered when a component is cloned, the new model is passed as an argument to the callback
     * * `component:update` - Triggered when a component is updated (moved, styled, etc.), the model is passed as an argument to the callback
     * * `component:update:{propertyName}` - Listen any property change, the model is passed as an argument to the callback
     * * `component:styleUpdate` - Triggered when the style of the component is updated, the model is passed as an argument to the callback
@@ -38217,7 +38231,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.47',
+    version: '0.14.48',
 
     /**
      * Initialize the editor with passed options
@@ -43805,7 +43819,6 @@ var _extends = Object.assign || function (target) { for (var i = 1; i < argument
                                                                                                                                                                                                                                                                    * * [removeProperty](#removeproperty)
                                                                                                                                                                                                                                                                    * * [getProperties](#getproperties)
                                                                                                                                                                                                                                                                    * * [getModelToStyle](#getmodeltostyle)
-                                                                                                                                                                                                                                                                   * * [getModelToStyle](#getmodeltostyle)
                                                                                                                                                                                                                                                                    * * [addType](#addtype)
                                                                                                                                                                                                                                                                    * * [getType](#gettype)
                                                                                                                                                                                                                                                                    * * [getTypes](#gettypes)
@@ -45159,25 +45172,29 @@ module.exports = function () {
         // Units
         switch (prop) {
           case 'top':
-          case 'right':
           case 'bottom':
-          case 'left':
           case 'margin-top':
-          case 'margin-right':
           case 'margin-bottom':
-          case 'margin-left':
           case 'padding-top':
-          case 'padding-right':
           case 'padding-bottom':
-          case 'padding-left':
           case 'min-height':
-          case 'min-width':
           case 'max-height':
+          case 'height':
+            obj.units = ['px', '%', 'vh'];
+            break;
+          case 'right':
+          case 'left':
+          case 'margin-right':
+          case 'margin-left':
+          case 'padding-right':
+          case 'padding-left':
+          case 'min-width':
           case 'max-width':
           case 'width':
-          case 'height':
-          case 'text-shadow-h':
+            obj.units = ['px', '%', 'vw'];
+            break;
           case 'text-shadow-v':
+          case 'text-shadow-h':
           case 'text-shadow-blur':
           case 'border-radius-c':
           case 'border-top-left-radius':
@@ -52915,9 +52932,11 @@ module.exports = _backbone2.default.View.extend({
   styleInFlow: function styleInFlow(el, parent) {
     var style = el.style;
     var $el = $(el);
+    var $parent = parent && $(parent);
+
     if (style.overflow && style.overflow !== 'visible') return;
     if ($el.css('float') !== 'none') return;
-    if (parent && $(parent).css('display') == 'flex') return;
+    if ($parent && $parent.css('display') == 'flex' && $parent.css('flex-direction') !== 'column') return;
     switch (style.position) {
       case 'static':
       case 'relative':
@@ -54055,7 +54074,7 @@ var upFirst = function upFirst(value) {
 };
 
 var camelCase = function camelCase(value) {
-  var values = value.split('-');
+  var values = value.split('-').filter(String);
   return values[0].toLowerCase() + values.slice(1).map(upFirst);
 };
 

@@ -38327,7 +38327,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.53',
+    version: '0.14.54',
 
     /**
      * Initialize the editor with passed options
@@ -47634,6 +47634,7 @@ module.exports = _backbone2.default.View.extend({
     var requires = model.get('requires');
     var requiresParent = model.get('requiresParent');
     var sectors = this.sector ? this.sector.collection : null;
+    var selected = this.em ? this.em.getSelected() : null;
     var stylable = trg.get('stylable');
 
     // Stylable could also be an array indicating with which property
@@ -47667,10 +47668,8 @@ module.exports = _backbone2.default.View.extend({
 
     // Check if the property is available based on parent's property values
     if (requiresParent) {
-      console.log('selected', this.em ? this.em.getSelected() : 'no em');
-      console.log('target', trg);
-      if (trg.view && trg.view.$el && trg.view.$el[0] && trg.view.$el[0].parentNode) {
-        var styles = window.getComputedStyle(trg.view.$el[0].parentNode);
+      if (selected && selected.view && selected.view.$el && selected.view.$el[0] && selected.view.$el[0].parentNode) {
+        var styles = window.getComputedStyle(selected.view.$el[0].parentNode);
         (0, _underscore.each)(requiresParent, function (values, property) {
           stylable = stylable && styles[property] && (0, _underscore.includes)(values, styles[property]);
         });

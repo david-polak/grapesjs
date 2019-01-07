@@ -38327,7 +38327,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.52',
+    version: '0.14.53',
 
     /**
      * Initialize the editor with passed options
@@ -47667,6 +47667,8 @@ module.exports = _backbone2.default.View.extend({
 
     // Check if the property is available based on parent's property values
     if (requiresParent) {
+      console.log('selected', this.em ? this.em.getSelected() : 'no em');
+      console.log('target', trg);
       if (trg.view && trg.view.$el && trg.view.$el[0] && trg.view.$el[0].parentNode) {
         var styles = window.getComputedStyle(trg.view.$el[0].parentNode);
         (0, _underscore.each)(requiresParent, function (values, property) {

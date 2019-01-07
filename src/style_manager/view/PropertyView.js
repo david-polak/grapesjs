@@ -453,6 +453,8 @@ module.exports = Backbone.View.extend({
       });
     }
 
+    console.log('selected', this.em.getSelected());
+    console.log('target', trg);
     // Check if the property is available based on parent's property values
     if (requiresParent) {
       if (

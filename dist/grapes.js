@@ -36640,7 +36640,7 @@ module.exports = {
     }, {
       name: 'Flex',
       open: false,
-      buildProps: ['flex-direction', 'flex-wrap', 'justify-content', 'align-items', 'align-content', 'order', 'flex-grow', 'flex-shrink', 'align-self']
+      buildProps: ['flex-direction', 'flex-wrap', 'justify-content', 'align-items', 'align-content', 'order', 'flex-basis', 'flex-grow', 'flex-shrink', 'align-self']
     }, {
       name: 'Dimension',
       open: false,
@@ -38327,7 +38327,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.51',
+    version: '0.14.52',
 
     /**
      * Initialize the editor with passed options
@@ -45090,6 +45090,7 @@ module.exports = function () {
           case 'height':
           case 'max-height':
           case 'min-height':
+          case 'flex-basis':
             obj.fixedValues = ['initial', 'inherit', 'auto'];
             break;
           case 'font-size':
@@ -45174,6 +45175,7 @@ module.exports = function () {
           case 'order':
           case 'flex-grow':
           case 'flex-shrink':
+          case 'flex-basis':
             obj.type = 'integer';
             break;
           case 'margin':
@@ -45283,6 +45285,7 @@ module.exports = function () {
           case 'height':
           case 'background-size':
           case 'cursor':
+          case 'flex-basis':
             obj.defaults = 'auto';
             break;
           case 'font-family':
@@ -45353,6 +45356,7 @@ module.exports = function () {
             obj.requires = { display: ['flex'] };
             break;
           case 'order':
+          case 'flex-basis':
           case 'flex-grow':
           case 'flex-shrink':
           case 'align-self':
@@ -45383,6 +45387,9 @@ module.exports = function () {
           case 'max-width':
           case 'width':
             obj.units = ['px', '%', 'vw'];
+            break;
+          case 'flex-basis':
+            obj.units = ['px', '%', 'vw', 'vh'];
             break;
           case 'text-shadow-v':
           case 'text-shadow-h':
@@ -45442,6 +45449,7 @@ module.exports = function () {
           case 'box-shadow-blur':
           case 'transition-duration':
           case 'perspective':
+          case 'flex-basis':
             obj.min = 0;
             break;
         }

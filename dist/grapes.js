@@ -38327,7 +38327,7 @@ module.exports = function () {
     plugins: plugins,
 
     // Will be replaced on build
-    version: '0.14.54',
+    version: '0.14.55',
 
     /**
      * Initialize the editor with passed options
@@ -45128,6 +45128,8 @@ module.exports = function () {
           case 'transition-timing-function':
           case 'cursor':
           case 'overflow':
+          case 'overflow-x':
+          case 'overflow-y':
             obj.type = 'select';
             break;
           case 'top':
@@ -45336,6 +45338,8 @@ module.exports = function () {
             obj.defaults = 'ease';
             break;
           case 'overflow':
+          case 'overflow-x':
+          case 'overflow-y':
             obj.defaults = 'visible';
             break;
         }
@@ -45569,6 +45573,8 @@ module.exports = function () {
             obj.list = [{ value: 'auto' }, { value: 'pointer' }, { value: 'copy' }, { value: 'crosshair' }, { value: 'grab' }, { value: 'grabbing' }, { value: 'help' }, { value: 'move' }, { value: 'text' }];
             break;
           case 'overflow':
+          case 'overflow-x':
+          case 'overflow-y':
             obj.list = [{ value: 'visible' }, { value: 'hidden' }, { value: 'scroll' }, { value: 'auto' }];
             break;
         }
@@ -47668,8 +47674,10 @@ module.exports = _backbone2.default.View.extend({
 
     // Check if the property is available based on parent's property values
     if (requiresParent) {
-      if (selected && selected.view && selected.view.$el && selected.view.$el[0] && selected.view.$el[0].parentNode) {
-        var styles = window.getComputedStyle(selected.view.$el[0].parentNode);
+      var parent = selected && selected.parent();
+      var parentEl = parent && parent.getEl();
+      if (parentEl) {
+        var styles = window.getComputedStyle(parentEl);
         (0, _underscore.each)(requiresParent, function (values, property) {
           stylable = stylable && styles[property] && (0, _underscore.includes)(values, styles[property]);
         });
